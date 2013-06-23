@@ -114,7 +114,13 @@ function ChatUICtrl ($scope, $http, $timeout) {
     };
     $http.post("/messages", payload).success(function(data) {
       // inefficient, but OK for now
-      $scope.loadChannels();
+      $http.get("/channels").success(function(data) {
+        $scope.channels = data;
+        if (!$scope.activeChannel) 
+          $scope.activeChannel = data[0];
+        $scope.populateMap();
+      });
+
     });
     /*
     $scope.activeChannel.messages.push({
