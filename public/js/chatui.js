@@ -192,8 +192,6 @@ function ChatUICtrl ($scope, $http) {
     $scope.$apply(function() {
       $scope.createTopic(topicName, latLng);
     });
-
-
   });
 
 }
