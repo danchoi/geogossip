@@ -65,7 +65,7 @@
         <div class="container" ng-controller="ChatUICtrl">
           <div class="row">
             <div class="span12">
-              <form ng-submit="createUser()" ng-hide="thisUser.submitted">
+              <form ng-submit="createUser()" ng-hide="thisUser.submitted || thisUser.already_created">
                 YOUR NICKNAME:
                 <input type="text" ng-model="thisUser.user_nick"/>
                 <input type="submit"/>
@@ -94,7 +94,7 @@
                 </form>
               </div>
               <div class="span4">
-                  <div  ng-show="thisUser.submitted">
+                  <div  ng-show="thisUser.submitted || thisUser.already_created">
                     Your name: {{thisUser.user_nick}}
                   </div>
                   <h2 ng-hide="topicEditMode">{{ activechannel.channel_title || "Chat"}}</h2>
