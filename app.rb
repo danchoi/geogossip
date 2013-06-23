@@ -52,6 +52,13 @@ post '/channels' do
   new_channel.to_json 
 end
 
+put '/channels/:id' do
+  payload = JSON.parse(request.body.read)
+  channel_to_edit = Channel.find_by_channel_id(params[:id])
+  channel_to_edit.update_attribute(:channel_title, payload['edited_topic_name'])
+  channel_to_edit.to_json
+end
+
 get '/users' do
   User.all.to_json
 end

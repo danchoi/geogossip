@@ -117,6 +117,16 @@ function ChatUICtrl ($scope, $http) {
     $scope.newTopicName = "";
   };
 
+  $scope.topicEditMode = false;
+  $scope.editTopic = function(){
+    $http.put("/channels/" + $scope.activeChannel.channel_id, {edited_topic_name: $scope.activeChannel.channel_title}).success(function(data) {
+      console.log('edited this topic');
+      console.log(data);
+      $scope.topicEditMode = false;
+    });
+
+  }
+
   $scope.loadChannels = function (){
     $http.get("/channels").success(function(data) {
       $scope.channels = data;
