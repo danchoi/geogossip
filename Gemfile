@@ -5,4 +5,4 @@ gem 'activerecord'
 gem 'sinatra'
 gem 'eventmachine', '1.0.1'
 gem 'em-websocket'
-
+gem 'thin'
