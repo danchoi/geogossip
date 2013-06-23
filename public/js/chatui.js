@@ -31,13 +31,12 @@ function ChatUICtrl ($scope, $http) {
 
   $scope.thisUser = {};
 
+  /* not used currently */
   $scope.refreshUsers = function() {
     $http.get("/users").success(function(data) {
       $scope.users = data;
     });
   }
-
-  $scope.refreshUsers();
 
   $scope.loginUser = function(){
    if (has_local_storage()){
