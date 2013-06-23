@@ -43,6 +43,7 @@ function ChatUICtrl ($scope, $http) {
     $http.post("/users", $scope.thisUser).success(function(data) {
       console.log("SUCCESS!");
       $scope.thisUser.user_nick = data.user_nick;
+      $scope.thisUser.user_id = data.user_id;
       $scope.thisUser.submitted = true;
       console.log("this user submitted is" + $scope.thisUser.submitted);      
     });
@@ -50,41 +51,35 @@ function ChatUICtrl ($scope, $http) {
   }
 
   $scope.channels = [
-    {
-      topic: "Best icecream @ JP Licks",
-      messages: [
-        {
-          name: "Dan",
-          message: "hey everyone"
-        },
-        {
-          name: "Jon",
-          message: "I like icecream and waffles!"
-        }
-      ],
-      latLng: null
-    },
-    {
-      topic: "Nemes @ Middle east!",
-      messages: [
-        {
-          name: "Jen",
-          message: "hey everyone"
-        },
-        {
-          name: "Judy",
-          message: "I like strawberries!"
-        }
-      ],
-      latLng: [42.373939, -71.119106]
-    }
+    // {
+    //   topic: "Best icecream @ JP Licks",
+    //   messages: [
+    //     {
+    //       name: "Dan",
+    //       message: "hey everyone"
+    //     },
+    //     {
+    //       name: "Jon",
+    //       message: "I like icecream and waffles!"
+    //     }
+    //   ],
+    //   latLng: null
+    // }
   ];
 
   $scope.activeChannel = $scope.channels[0];
   $scope.activeChannelIdx = 0;
   $scope.selectChannel = function(idx){
+    if(!$scope.thisUser.user_id){
+      alert("Please enter a nickname");
+      return;
+    }
     $scope.activeChannel = $scope.channels[idx];
     $scope.activeChannelIdx = idx;
+    $http.post('/memberships', {user_id: $scope.thisUser.user_id, channel_id: $scope.activeChannel.channel_id})
+      .success(function(data){
+        console.log(data);
+      });
     console.log("active channel is: " + $scope.activeChannel.topic);
   };
 
@@ -109,12 +104,22 @@ function ChatUICtrl ($scope, $http) {
 
   $scope.createTopic = function () {
     console.log("running createTopic");
-    $scope.channels.push({
-      topic: $scope.newTopicName,
-      messages:[]
+    $http.post("/channels", {new_topic_name: $scope.newTopicName}).success(function(data) {
+      console.log('got back this topic');
+      console.log(data);
+      $scope.activeChannel = data;
+      $scope.loadChannels();
     });
+
     $scope.newTopicName = "";
   };
+
+  $scope.loadChannels = function (){
+    $http.get("/channels").success(function(data) {
+      $scope.channels = data;
+    });
+  };
+  $scope.loadChannels();
 
   $scope.populateMap = function (){
     var xs = $.grep($scope.channels, channelsWithLocations);

@@ -45,6 +45,13 @@ get '/channels' do
   }.to_json
 end
 
+post '/channels' do
+  payload = JSON.parse(request.body.read)
+  new_channel = Channel.find_or_create_by_channel_title(payload['new_topic_name'])
+  puts "#{new_channel.to_json}"
+  new_channel.to_json 
+end
+
 get '/users' do
   User.all.to_json
 end
@@ -62,5 +69,14 @@ post '/users' do
   user = User.create( user_nick: basename + s )
   puts "New user: #{user.inspect}"
   user.to_json
+end
+
+post '/memberships' do
+  payload = JSON.parse(request.body.read)
+  user_id = payload["user_id"]
+  channel_id = payload["channel_id"]
+  m = Membership.find_or_create_by_user_id_and_channel_id( user_id, channel_id)
+  puts "#{m.inspect}"
+  m.to_json
 end
 
