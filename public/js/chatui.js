@@ -119,6 +119,7 @@ function ChatUICtrl ($scope, $http) {
   $scope.loadChannels = function (){
     $http.get("/channels").success(function(data) {
       $scope.channels = data;
+      $scope.activeChannel = data[0];
     });
   };
   $scope.loadChannels();

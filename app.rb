@@ -10,11 +10,13 @@ end
 class Message < ActiveRecord::Base
   self.primary_key = "message_id"
   belongs_to :user
+  belongs_to :channel
 end
 class Channel < ActiveRecord::Base
   self.primary_key = "channel_id"
   has_many :memberships
   has_many :users, :through => :memberships
+  has_many :messages, order: "created desc"
 end
 class Membership < ActiveRecord::Base
   self.primary_key = "membership_id"
@@ -40,13 +42,14 @@ end
 get '/channels' do
   Channel.all.map {|channel|
     channel.attributes.merge(
-      users: channel.users
+      users: channel.users,
+      messages: channel.messages.limit(20)
     )
   }.to_json
 end
 
 post '/channels' do
-  payload = JSON.parse(request.body.read)
+  pesayload = JSON.parse(request.body.read)
   new_channel = Channel.find_or_create_by_channel_title(payload['new_topic_name'])
   puts "#{new_channel.to_json}"
   new_channel.to_json 
