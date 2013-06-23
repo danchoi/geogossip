@@ -77,19 +77,22 @@
           <!-- angular d3.js examples -->
           <div class="row">
               <div class="span8">
+                <!-- CHANNELS  -->
                 <div id="map"></div>
                 <div class="topics_list">
                   <button class="add_topic">Add a new topic</button>
 
                   <!-- topics go here -->
-                  <div ng-click="selectChannel($index)" ng-repeat="channel in channels" class="topic" ng-class="channelClass($index)">
+                  <div ng-click="selectChannel($index)" 
+                       ng-repeat="channel in channels" class="topic" 
+                       ng-class="{channel_active: channel.channel_id == activeChannel.channel_id}">
                     {{channel.channel_title}}
                     <span class="map_topic" ng-show="channel.latLng">(m)</span>
                   </div>
                 </div>
-                <form name="newTopicForm" ng-submit="createTopic()">
+                <form style="clear:left" name="newTopicForm" ng-submit="createTopic()">
                   <input type="text" ng-model="newTopicName" class="topic_input" placeholder="Add a new topic here"/>
-                  <input type="submit"/>
+                  <input ng-disabled="!thisUser.user_id" type="submit"/>
                 </form>
               </div>
               <div class="span4">

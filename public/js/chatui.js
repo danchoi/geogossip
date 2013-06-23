@@ -67,15 +67,12 @@ function ChatUICtrl ($scope, $http) {
     // }
   ];
 
-  $scope.activeChannel = $scope.channels[0];
-  $scope.activeChannelIdx = 0;
   $scope.selectChannel = function(idx){
     if(!$scope.thisUser.user_id){
       alert("Please enter a nickname");
       return;
     }
     $scope.activeChannel = $scope.channels[idx];
-    $scope.activeChannelIdx = idx;
     $http.post('/memberships', {user_id: $scope.thisUser.user_id, channel_id: $scope.activeChannel.channel_id})
       .success(function(data){
         console.log(data);
@@ -91,15 +88,6 @@ function ChatUICtrl ($scope, $http) {
     });
 
     $scope.newMessage = "";
-  };
-
-  $scope.channelClass = function(idx){
-    if(idx === $scope.activeChannelIdx){
-      return "channel_active";
-    }
-    else{
-      return "";
-    }
   };
 
   $scope.createTopic = function () {
