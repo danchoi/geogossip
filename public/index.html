@@ -62,18 +62,10 @@
             </div>
         </div>
 
-        <div class="container">
-          <div class="row" ng-controller="ChatUICtrl">
+        <div class="container" ng-controller="ChatUICtrl">
+          <div class="row">
             <div class="span12">
-              <h1>Users in DB</h1>
-
-              <div ng-repeat="user in users">
-                <h3>{{user.user_nick}}</h3>
-              </div>
-
-              <hr/>
-
-              <form ng-submit="createUser()">
+              <form ng-submit="createUser()" ng-hide="thisUser.submitted">
                 YOUR NICKNAME:
                 <input type="text" ng-model="thisUser.user_nick"/>
                 <input type="submit"/>
@@ -83,7 +75,7 @@
           </div>
 
           <!-- angular d3.js examples -->
-          <div class="row" ng-controller="ChatUICtrl">
+          <div class="row">
               <div class="span8">
                 <div id="map"></div>
                 <div class="topics_list">
@@ -101,6 +93,9 @@
                 </form>
               </div>
               <div class="span4">
+                  <div  ng-show="thisUser.submitted">
+                    Your name: {{thisUser.user_nick}}
+                  </div>
                   <h2 ng-hide="topicEditMode">{{ activeChannel.topic || "Chat"}}</h2>
                   <h3 class="map_topic" ng-show="activeChannel.latLng">(map)</h3>
                   <form ng-submit="topicEditMode = false" ng-show="topicEditMode">

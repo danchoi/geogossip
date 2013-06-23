@@ -33,6 +33,10 @@ ActiveRecord::Base.include_root_in_json = false
 
 set :public_dir, "public"
 
+get '/' do
+  File.read("public/index.html")
+end
+
 get '/channels' do
   Channel.all.map {|channel|
     channel.attributes.merge(
@@ -46,8 +50,17 @@ get '/users' do
 end
 
 post '/users' do
-  payload = JSON.parse(request.body.read) 
-  user = User.create( user_nick: payload["user_nick"] )
+  payload = JSON.parse(request.body.read)
+  basename = payload["user_nick"]
+  count = 1
+  s = ''
+  while User.find_by_user_nick(basename + s) 
+    s = count.to_s
+    count += 1
+  end 
+
+  user = User.create( user_nick: basename + s )
   puts "New user: #{user.inspect}"
+  user.to_json
 end
 

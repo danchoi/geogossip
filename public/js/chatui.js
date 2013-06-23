@@ -41,9 +41,11 @@ function ChatUICtrl ($scope, $http) {
 
   $scope.createUser = function() {
     $http.post("/users", $scope.thisUser).success(function(data) {
-      console.log("SUCCESS!")
+      console.log("SUCCESS!");
+      $scope.thisUser.user_nick = data.user_nick;
+      $scope.thisUser.submitted = true;
+      console.log("this user submitted is" + $scope.thisUser.submitted);      
     });
-    $scope.refreshUsers();
 
   }
 
