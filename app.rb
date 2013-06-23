@@ -74,9 +74,13 @@ end
 post '/memberships' do
   payload = JSON.parse(request.body.read)
   user_id = payload["user_id"]
+  user = User.find user_id
   channel_id = payload["channel_id"]
+  # expire all current memberships
+  user.memberships.each {|x| x.update_attributes(terminated: Time.now)}
   m = Membership.find_or_create_by_user_id_and_channel_id( user_id, channel_id)
-  puts "#{m.inspect}"
+  m.update_attributes(terminated: nil)
+  puts "#{m.to_json}"
   m.to_json
 end
 
