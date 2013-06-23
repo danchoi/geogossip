@@ -114,7 +114,8 @@ post '/messages' do
     user: user, 
     user_nick: user.user_nick,
     channel: channel,
-    message_content: payload['message_content']
+    message_content: payload['message_content'],
+    created: Time.now
   )
   puts payload
   res.to_json
