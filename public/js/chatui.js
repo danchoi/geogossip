@@ -80,6 +80,12 @@ function ChatUICtrl ($scope, $http) {
     //   latLng: null
     // }
   ];
+  $scope.loadChannels = function (){
+    $http.get("/channels").success(function(data) {
+      $scope.channels = data;
+      $scope.activeChannel = data[0];
+    });
+  };
 
   $scope.selectChannel = function(idx){
     if(!$scope.thisUser.user_id){
@@ -94,12 +100,22 @@ function ChatUICtrl ($scope, $http) {
     console.log("active channel is: " + $scope.activeChannel.topic);
   };
 
-  $scope.addMessage = function(msg){
-    console.log("running addMessage");
+  $scope.postMessage = function(msg){
+    var payload = {
+      user_id: $scope.thisUser.user_id, 
+      message_content: $scope.newMessage,
+      channel_id: $scope.activeChannel.channel_id
+    };
+    $http.post("/messages", payload).success(function(data) {
+      // inefficient, but OK for now
+      $scope.loadChannels();
+    });
+    /*
     $scope.activeChannel.messages.push({
       name: "Anon",
       message: $scope.newMessage
     });
+    */
 
     $scope.newMessage = "";
   };
@@ -116,12 +132,6 @@ function ChatUICtrl ($scope, $http) {
     $scope.newTopicName = "";
   };
 
-  $scope.loadChannels = function (){
-    $http.get("/channels").success(function(data) {
-      $scope.channels = data;
-      $scope.activeChannel = data[0];
-    });
-  };
   $scope.loadChannels();
 
   function has_local_storage(){

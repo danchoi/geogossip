@@ -76,14 +76,32 @@ end
 
 post '/memberships' do
   payload = JSON.parse(request.body.read)
-  user_id = payload["user_id"]
-  user = User.find user_id
+  user = User.find payload
   channel_id = payload["channel_id"]
   # expire all current memberships
   user.memberships.each {|x| x.update_attributes(terminated: Time.now)}
-  m = Membership.find_or_create_by_user_id_and_channel_id( user_id, channel_id)
+  m = Membership.find_or_create_by_user_id_and_channel_id( user.id, channel_id)
   m.update_attributes(terminated: nil)
   puts "#{m.to_json}"
   m.to_json
+end
+
+
+post '/messages' do
+  payload = JSON.parse(request.body.read)
+  user = find_user payload
+  channel = Channel.find payload['channel_id']
+  res = Message.create(
+    user: user, 
+    user_nick: user.user_nick,
+    channel: channel,
+    message_content: payload['message_content']
+  )
+  puts payload
+  res.to_json
+end
+
+def find_user payload
+  User.find(payload['user_id']) # may change this impl later
 end
 
