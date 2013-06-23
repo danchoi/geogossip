@@ -16,7 +16,7 @@ class Channel < ActiveRecord::Base
   self.primary_key = "channel_id"
   has_many :memberships
   has_many :users, :through => :memberships
-  has_many :messages, order: "created desc"
+  has_many :messages, order: "id desc"
 end
 class Membership < ActiveRecord::Base
   self.primary_key = "membership_id"
