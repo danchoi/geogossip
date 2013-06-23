@@ -10,11 +10,13 @@ end
 class Message < ActiveRecord::Base
   self.primary_key = "message_id"
   belongs_to :user
+  belongs_to :channel
 end
 class Channel < ActiveRecord::Base
   self.primary_key = "channel_id"
   has_many :memberships
   has_many :users, :through => :memberships
+  has_many :messages, order: "created desc"
 end
 class Membership < ActiveRecord::Base
   self.primary_key = "membership_id"
@@ -40,13 +42,14 @@ end
 get '/channels' do
   Channel.all.map {|channel|
     channel.attributes.merge(
-      users: channel.users
+      users: channel.users,
+      messages: channel.messages.limit(20)
     )
   }.to_json
 end
 
 post '/channels' do
-  payload = JSON.parse(request.body.read)
+  pesayload = JSON.parse(request.body.read)
   new_channel = Channel.find_or_create_by_channel_title(payload['new_topic_name'])
   puts "#{new_channel.to_json}"
   new_channel.to_json 
@@ -80,14 +83,32 @@ end
 
 post '/memberships' do
   payload = JSON.parse(request.body.read)
-  user_id = payload["user_id"]
-  user = User.find user_id
+  user = User.find payload
   channel_id = payload["channel_id"]
   # expire all current memberships
   user.memberships.each {|x| x.update_attributes(terminated: Time.now)}
-  m = Membership.find_or_create_by_user_id_and_channel_id( user_id, channel_id)
+  m = Membership.find_or_create_by_user_id_and_channel_id( user.id, channel_id)
   m.update_attributes(terminated: nil)
   puts "#{m.to_json}"
   m.to_json
+end
+
+
+post '/messages' do
+  payload = JSON.parse(request.body.read)
+  user = find_user payload
+  channel = Channel.find payload['channel_id']
+  res = Message.create(
+    user: user, 
+    user_nick: user.user_nick,
+    channel: channel,
+    message_content: payload['message_content']
+  )
+  puts payload
+  res.to_json
+end
+
+def find_user payload
+  User.find(payload['user_id']) # may change this impl later
 end
 

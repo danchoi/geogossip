@@ -108,15 +108,16 @@
                   <button ng-click="topicEditMode = true" ng-hide="topicEditMode">
                     change topic name
                   </button>
-                  <!-- chat goes here -->
+
+                  <!-- chat messages go here -->
                   <div class="chat_container">
                     <div class="chat_message" ng-repeat="message in activeChannel.messages">
-                      <span class="username">{{message.name}}</span> says: {{message.message}}
+                      <span class="username">{{message.name}}</span> says: {{message.message_content}}
                     </div>
                   </div>
-                  <form ng-submit="addMessage()">
+                  <form ng-submit="postMessage()">
                     <input ng-model="newMessage" type="text" class="chat_input"/>
-                    <input type="submit"/>
+                    <input value="Post message" type="submit"/>
                   </form>
               </div>
           </div>
