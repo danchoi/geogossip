@@ -1,3 +1,23 @@
+//setup for websocket connection
+$(document).ready(function() {
+  var url = "ws://" + location.host.split(':')[0] + ":9395/";
+  w = new WebSocket(url);
+
+  w.onopen = function(e) {
+    console.log("Connecting to "+url);
+
+  };
+  w.onmessage = function(e){
+    //receceived some message
+    var json_msg = JSON.parse(e.data);
+    console.log("RECEIVED websocket message!");
+    console.log(json_msg);
+  }
+});
+
+
+
+
 var map = L.map('map', { dragging: false,
                          zoomControl: false,
                          zoomAnimation: false,
