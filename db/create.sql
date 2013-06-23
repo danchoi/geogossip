@@ -35,3 +35,4 @@ create table messages (
 create index messages_channel_idx on messages (channel_id);
 create index messages_user_idx on messages (user_id);
 
+create language plpgsql;
