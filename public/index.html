@@ -84,7 +84,7 @@
                   <div id="channel-{{channel.channel_id}}"
                        ng-click="selectChannel($index)" 
                        ng-repeat="channel in channels" class="topic" 
-                       ng-class="{channel_active: channel.channel_id == activeChannel.channel_id}" >
+                       ng-class="{channel_active: channel.channel_id == activeChannel.channel_id, channel: true}" >
                     {{channel.channel_title}}
                     <span class="map_topic" ng-show="channel.latLng">(map)</span>
                   </div>

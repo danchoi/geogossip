@@ -220,6 +220,9 @@ function ChatUICtrl ($scope, $http, $timeout) {
         console.log(json_msg);
         var channel_id = json_msg.channel_id;
 
+        d3.selectAll(".channel")
+          .style("background-color", "white");
+
         d3.select("#channel-"+channel_id)
           .style("background-color", "red")
           .transition()
