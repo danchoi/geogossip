@@ -16,7 +16,7 @@ class Channel < ActiveRecord::Base
   self.primary_key = "channel_id"
   has_many :memberships
   has_many :users, :through => :memberships
-  has_many :messages, order: "id desc"
+  has_many :messages, order: "message_id desc"
 end
 class Membership < ActiveRecord::Base
   self.primary_key = "membership_id"
@@ -43,7 +43,7 @@ get '/channels' do
   Channel.order("updated desc").all.map {|channel|
     channel.attributes.merge(
       users: channel.users,
-      messages: channel.messages.limit(20),
+      messages: channel.messages.limit(20).reverse,
       latLng: (channel.lat && channel.lng) ? [channel.lat, channel.lng] : nil
     )
   }.to_json
@@ -62,7 +62,7 @@ get '/channel/:id' do
   channel = Channel.find params[:id]
   channel.attributes.merge(
     users: channel.users,
-    messages: channel.messages.limit(20),
+    messages: channel.messages.limit(20).reverse,
     latLng: (channel.lat && channel.lng) ? [channel.lat, channel.lng] : nil
   ).to_json
 end
