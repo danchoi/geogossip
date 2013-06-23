@@ -114,13 +114,7 @@ function ChatUICtrl ($scope, $http, $timeout) {
     };
     $http.post("/messages", payload).success(function(data) {
       // inefficient, but OK for now
-      $http.get("/channels").success(function(data) {
-        $scope.channels = data;
-        if (!$scope.activeChannel) 
-          $scope.activeChannel = data[0];
-        $scope.populateMap();
-      });
-
+      $scope.loadChannels();
     });
     /*
     $scope.activeChannel.messages.push({
@@ -219,27 +213,31 @@ function ChatUICtrl ($scope, $http, $timeout) {
 
     };
     w.onmessage = function(e){
-      //receceived some message
-      var json_msg = JSON.parse(e.data);
-      console.log("RECEIVED websocket message!");
-      console.log(json_msg);
-      var channel_id = json_msg.channel_id;
-      d3.select("#channel-"+channel_id)
-        .style("background-color", "red");
-      
-      d3.select("#channel-circle-"+channel_id)
-        .style("fill", "red")
-        .attr("r", 20)
-        .transition()
-        .duration(500)
-        .attr("r", 12)
-        .style("fill", "yellow")
+      $scope.$apply(function() {
+        //receceived some message
+        var json_msg = JSON.parse(e.data);
+        console.log("RECEIVED websocket message!");
+        console.log(json_msg);
+        var channel_id = json_msg.channel_id;
+        d3.select("#channel-"+channel_id)
+          .style("background-color", "red");
+        
+        d3.select("#channel-circle-"+channel_id)
+          .style("fill", "red")
+          .attr("r", 20)
+          .transition()
+          .duration(500)
+          .attr("r", 12)
+          .style("fill", "yellow")
 
-      $http.get("/channel/"+channel_id).success(function(data) {
-        console.log("new channel data "+data);
-        $scope.activeChannel = data;
-      });
- 
+        $http.get("/channel/"+channel_id).success(function(data) {
+          console.log("new channel data "+data);
+          $scope.activeChannel = data;
+          $scope.apply(function() {
+          
+          });
+        });
+      });   
     }
   });
 

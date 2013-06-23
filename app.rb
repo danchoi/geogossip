@@ -120,6 +120,8 @@ post '/messages' do
     created: Time.now
   )
   puts payload
+  # send back channels (saves extra request)
+  #
   res.to_json
 end
 
