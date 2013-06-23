@@ -90,7 +90,7 @@
                 </div>
                 <form style="clear:left" name="newTopicForm" ng-submit="createTopic()">
                   <input type="text" ng-model="newTopicName" class="topic_input" placeholder="Add a new topic here"/>
-                  <input ng-disabled="!thisUser.user_id" type="submit"/>
+                  <input value="Add topic" ng-disabled="!thisUser.user_id" type="submit"/>
                 </form>
               </div>
               <div class="span4">
