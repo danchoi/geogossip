@@ -219,8 +219,12 @@ function ChatUICtrl ($scope, $http, $timeout) {
         console.log("RECEIVED websocket message!");
         console.log(json_msg);
         var channel_id = json_msg.channel_id;
+
         d3.select("#channel-"+channel_id)
-          .style("background-color", "red");
+          .style("background-color", "red")
+          .transition()
+          .duration(500)
+          .style("background-color", "yellow");
         
         d3.select("#channel-circle-"+channel_id)
           .style("fill", "red")
