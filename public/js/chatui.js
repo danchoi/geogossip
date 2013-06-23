@@ -39,15 +39,30 @@ function ChatUICtrl ($scope, $http) {
 
   $scope.refreshUsers();
 
+  $scope.loginUser = function(){
+   if (has_local_storage()){
+      if(localStorage['geogossip.user_id'] && localStorage['geogossip.user_nick']){
+        $scope.thisUser.user_nick = localStorage['geogossip.user_nick']
+        $scope.thisUser.user_id = localStorage['geogossip.user_id'];
+        $scope.thisUser.already_created = true;
+      }
+    } 
+  }
+  $scope.loginUser();
+
   $scope.createUser = function() {
+    console.log("SUCCESS!");
     $http.post("/users", $scope.thisUser).success(function(data) {
-      console.log("SUCCESS!");
       $scope.thisUser.user_nick = data.user_nick;
       $scope.thisUser.user_id = data.user_id;
+      if (has_local_storage()){
+        localStorage['geogossip.user_nick'] = $scope.thisUser.user_nick; 
+        localStorage['geogossip.user_id'] = $scope.thisUser.user_id;
+        $scope.thisUser.already_created = true;
+      } 
       $scope.thisUser.submitted = true;
       console.log("this user submitted is" + $scope.thisUser.submitted);      
     });
-
   }
 
   $scope.channels = [
@@ -108,6 +123,14 @@ function ChatUICtrl ($scope, $http) {
     });
   };
   $scope.loadChannels();
+
+  function has_local_storage(){
+    try {
+      return 'localStorage' in window && window['localStorage'] !== null;
+    } catch (e) {
+      return false;
+    };
+  };
 
   $scope.populateMap = function (){
     var xs = $.grep($scope.channels, channelsWithLocations);
