@@ -58,6 +58,15 @@ post '/channels' do
   channel.to_json 
 end
 
+get '/channel/:id' do
+  channel = Channel.find params[:id]
+  channel.attributes.merge(
+    users: channel.users,
+    messages: channel.messages.limit(20),
+    latLng: (channel.lat && channel.lng) ? [channel.lat, channel.lng] : nil
+  ).to_json
+end
+
 put '/channels/:id' do
   payload = JSON.parse(request.body.read)
   channel_to_edit = Channel.find_by_channel_id(params[:id])

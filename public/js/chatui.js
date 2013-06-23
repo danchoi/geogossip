@@ -1,20 +1,3 @@
-//setup for websocket connection
-$(document).ready(function() {
-  var url = "ws://" + location.host.split(':')[0] + ":9395/";
-  w = new WebSocket(url);
-
-  w.onopen = function(e) {
-    console.log("Connecting to "+url);
-
-  };
-  w.onmessage = function(e){
-    //receceived some message
-    var json_msg = JSON.parse(e.data);
-    console.log("RECEIVED websocket message!");
-    console.log(json_msg);
-  }
-});
-
 
 
 
@@ -47,7 +30,7 @@ function channelsWithLocations(x){
   return (!!x.latLng);
 }
 
-function ChatUICtrl ($scope, $http) {
+function ChatUICtrl ($scope, $http, $timeout) {
 
   $scope.thisUser = {};
 
@@ -102,12 +85,10 @@ function ChatUICtrl ($scope, $http) {
   ];
   $scope.loadChannels = function (){
     $http.get("/channels").success(function(data) {
-      
-        $scope.channels = data;
-        if (!$scope.activeChannel) 
-          $scope.activeChannel = data[0];
-        $scope.populateMap();
-     
+      $scope.channels = data;
+      if (!$scope.activeChannel) 
+        $scope.activeChannel = data[0];
+      $scope.populateMap();
     });
   };
 
@@ -184,6 +165,9 @@ function ChatUICtrl ($scope, $http) {
     svg.selectAll("circle")
     .data(xs)
     .enter().append("circle")
+    .attr('id', function(d) { 
+      return ("channel-circle-" + d.channel_id);
+    })
     .attr('class', function(d) { 
       var cn = d.channel_id === $scope.activeChannel.channel_id ? "active" : null;
       return cn;
@@ -217,6 +201,40 @@ function ChatUICtrl ($scope, $http) {
     $scope.$apply(function() {
       $scope.createTopic(topicName, latLng);
     });
+  });
+
+  //setup for websocket connection
+  $(document).ready(function() {
+    var url = "ws://" + location.host.split(':')[0] + ":9395/";
+    w = new WebSocket(url);
+
+    w.onopen = function(e) {
+      console.log("Connecting to "+url);
+
+    };
+    w.onmessage = function(e){
+      //receceived some message
+      var json_msg = JSON.parse(e.data);
+      console.log("RECEIVED websocket message!");
+      console.log(json_msg);
+      var channel_id = json_msg.channel_id;
+      d3.select("#channel-"+channel_id)
+        .style("background-color", "red");
+      
+      d3.select("#channel-circle-"+channel_id)
+        .style("fill", "red")
+        .attr("r", 20)
+        .transition()
+        .duration(500)
+        .attr("r", 12)
+        .style("fill", "yellow")
+
+      $http.get("/channel/"+channel_id).success(function(data) {
+        console.log("new channel data "+data);
+        $scope.activeChannel = data;
+      });
+ 
+    }
   });
 
 }

@@ -12,7 +12,8 @@ Thread.new do
   DB.listen(['messages'], loop:true) do |channel, pid, payload|
     puts "Notified: #{channel} #{pid} #{payload}"
     puts "#{@channel_updater}"
-   @channel_updater.push({channel: channel, payload: payload}.to_json)
+    channel_id = payload[/channel_id (\d+)/, 1]
+    @channel_updater.push({channel: channel, channel_id: channel_id, payload: payload}.to_json)
   end
 end
 

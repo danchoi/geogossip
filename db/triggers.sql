@@ -2,7 +2,7 @@
 CREATE OR REPLACE FUNCTION notify_message_posted() RETURNS trigger AS $$
 DECLARE
 BEGIN
-  PERFORM pg_notify('messages', 'message posted to channel ' || CAST(NEW.channel_id AS text));
+  PERFORM pg_notify('messages', 'message posted to channel_id ' || CAST(NEW.channel_id AS text));
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
