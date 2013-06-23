@@ -43,16 +43,19 @@ get '/channels' do
   Channel.all.map {|channel|
     channel.attributes.merge(
       users: channel.users,
-      messages: channel.messages.limit(20)
+      messages: channel.messages.limit(20),
+      latLng: (channel.lat && channel.lng) ? [channel.lat, channel.lng] : nil
     )
   }.to_json
 end
 
 post '/channels' do
-  pesayload = JSON.parse(request.body.read)
-  new_channel = Channel.find_or_create_by_channel_title(payload['new_topic_name'])
-  puts "#{new_channel.to_json}"
-  new_channel.to_json 
+  payload = JSON.parse(request.body.read)
+  puts "POST channels #{payload.inspect}"
+  channel = Channel.find_or_create_by_channel_title(payload['channel_title'])
+  channel.update_attributes(lat: payload['latLng'][0], lng: payload['latLng'][1])
+  puts "#{channel.to_json}"
+  channel.to_json 
 end
 
 put '/channels/:id' do

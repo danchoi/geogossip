@@ -85,10 +85,10 @@
                        ng-repeat="channel in channels" class="topic" 
                        ng-class="{channel_active: channel.channel_id == activeChannel.channel_id}">
                     {{channel.channel_title}}
-                    <span class="map_topic" ng-show="channel.latLng">(m)</span>
+                    <span class="map_topic" ng-show="channel.latLng">(map)</span>
                   </div>
                 </div>
-                <form style="clear:left" name="newTopicForm" ng-submit="createTopic()">
+                <form style="clear:left" name="newTopicForm" ng-submit="createTopic(newTopicName)">
                   <input type="text" ng-model="newTopicName" class="topic_input" placeholder="Add a new topic here"/>
                   <input value="Add topic" ng-disabled="!thisUser.user_id" type="submit"/>
                 </form>

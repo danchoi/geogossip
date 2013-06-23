@@ -82,8 +82,12 @@ function ChatUICtrl ($scope, $http) {
   ];
   $scope.loadChannels = function (){
     $http.get("/channels").success(function(data) {
-      $scope.channels = data;
-      $scope.activeChannel = data[0];
+      
+        $scope.channels = data;
+        if (!$scope.activeChannel) 
+          $scope.activeChannel = data[0];
+        $scope.populateMap();
+     
     });
   };
 
@@ -120,11 +124,10 @@ function ChatUICtrl ($scope, $http) {
     $scope.newMessage = "";
   };
 
-  $scope.createTopic = function () {
-    console.log("running createTopic");
-    $http.post("/channels", {new_topic_name: $scope.newTopicName}).success(function(data) {
-      console.log('got back this topic');
-      console.log(data);
+  $scope.createTopic = function (topicName, latLng) {
+    console.log("createTopic: "+topicName + " latLng: "+latLng);
+    $http.post("/channels", {channel_title: topicName, latLng: latLng}).success(function(data) {
+      console.log("created topic "+data);
       $scope.activeChannel = data;
       $scope.loadChannels();
     });
@@ -180,16 +183,16 @@ function ChatUICtrl ($scope, $http) {
   map.on('click', function (e) {
     var latLng = [e.latlng.lat, e.latlng.lng];
     console.log(latLng);
+    var topicName = prompt("Name this topic:");
     var newChannel = {
-      topic: "some topic",
+      channel_title: topicName,
       messages: [],
       latLng: latLng
     };
-    $scope.channels.push(newChannel);
-    console.log($scope.channels);
+    $scope.$apply(function() {
+      $scope.createTopic(topicName, latLng);
+    });
 
-    $scope.$apply();
-    $scope.populateMap();
 
   });
 
