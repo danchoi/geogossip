@@ -7,4 +7,4 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE TRIGGER notify_message_posted  AFTER INSERT ON messages FOR EACH ROW EXECUTE PROCEDURE notify_message_posted();
+CREATE TRIGGER notify_message_posted  AFTER INSERT ON messages FOR EACH ROW EXECUTE PROCEDURE notify_message_posted();
