@@ -101,7 +101,8 @@ function ChatUICtrl ($scope, $http) {
       .success(function(data){
         console.log(data);
       });
-    console.log("active channel is: " + $scope.activeChannel.topic);
+    /* this highlights map circle if channel on map */
+    $scope.populateMap();
   };
 
   $scope.postMessage = function(msg){
@@ -163,15 +164,19 @@ function ChatUICtrl ($scope, $http) {
     svg.selectAll("circle")
     .data(xs)
     .enter().append("circle")
-    .attr('class', 'geoChatCircle')
+    .attr('class', function(d) { 
+      var cn = d.channel_id === $scope.activeChannel.channel_id ? "active" : null;
+      return cn;
+    })
     .attr("cx", function(d) {
-      console.log(d.latLng);
-      console.log(project(d.latLng));
       return (project(d.latLng)[0]);
     })
     .attr("cy", function(d) {return (project(d.latLng)[1])})
     .attr("r", 12)
-    .style("fill", "#f03")
+    .style("fill", function(d) {
+      var f = d.channel_id === $scope.activeChannel.channel_id ? "yellow" : "#f03";
+      return f;
+    })
     .style('fill-opacity', 0.3)
     .style("stroke", "red")
     .style("stroke-opacity", 1)

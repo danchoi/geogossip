@@ -40,7 +40,7 @@ get '/' do
 end
 
 get '/channels' do
-  Channel.all.map {|channel|
+  Channel.order("updated desc").all.map {|channel|
     channel.attributes.merge(
       users: channel.users,
       messages: channel.messages.limit(20),
@@ -86,7 +86,7 @@ end
 
 post '/memberships' do
   payload = JSON.parse(request.body.read)
-  user = User.find payload
+  user = find_user payload
   channel_id = payload["channel_id"]
   # expire all current memberships
   user.memberships.each {|x| x.update_attributes(terminated: Time.now)}
@@ -112,6 +112,7 @@ post '/messages' do
 end
 
 def find_user payload
+  puts "find_user from payload: #{payload.to_json}"
   User.find(payload['user_id']) # may change this impl later
 end
 

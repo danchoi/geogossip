@@ -10,9 +10,9 @@ Create the database
 
 Run the Sintra app
 
-    ruby app.rb
+    rackup -s thin
 
-A test change
+Open the app on localhost:9292
 
 ![readme](./img/geogossip.png)
 
