@@ -53,7 +53,9 @@ post '/channels' do
   payload = JSON.parse(request.body.read)
   puts "POST channels #{payload.inspect}"
   channel = Channel.find_or_create_by_channel_title(payload['channel_title'])
-  channel.update_attributes(lat: payload['latLng'][0], lng: payload['latLng'][1])
+  if payload['latLng']
+    channel.update_attributes(lat: payload['latLng'][0], lng: payload['latLng'][1])
+  end
   puts "#{channel.to_json}"
   channel.to_json 
 end
