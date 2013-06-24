@@ -102,7 +102,7 @@ function ChatUICtrl ($scope, $http, $timeout) {
         $scope.channels[idx] = data;
         $scope.populateMap();
         $timeout(function(){
-		$(".chat_container").scrollTop($(".chat_container")[0].scrollHeight);
+	  $(".chat_container").scrollTop($(".chat_container")[0].scrollHeight);
 	}, 200);
 
       });
@@ -247,6 +247,10 @@ function ChatUICtrl ($scope, $http, $timeout) {
         
         if ($scope.activeChannel.channel_id == channel_id){
             $scope.activeChannel = json_msg.channel_obj; 
+	    $timeout(function(){
+	      $(".chat_container").scrollTop($(".chat_container")[0].scrollHeight);
+	    }, 200);
+
         }
       }); 
     }
