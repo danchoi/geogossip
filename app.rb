@@ -43,7 +43,7 @@ get '/channels' do
   Channel.order("updated desc").all.map {|channel|
     channel.attributes.merge(
       users: channel.users,
-      messages: channel.messages.limit(100).reverse,
+      messages: [],
       latLng: (channel.lat && channel.lng) ? [channel.lat, channel.lng] : nil
     )
   }.to_json
@@ -53,18 +53,24 @@ post '/channels' do
   payload = JSON.parse(request.body.read)
   puts "POST channels #{payload.inspect}"
   channel = Channel.find_or_create_by_channel_title(payload['channel_title'])
-  channel.update_attributes(lat: payload['latLng'][0], lng: payload['latLng'][1])
+  if payload['latLng']
+    channel.update_attributes(lat: payload['latLng'][0], lng: payload['latLng'][1])
+  end
   puts "#{channel.to_json}"
   channel.to_json 
 end
 
-get '/channel/:id' do
-  channel = Channel.find params[:id]
+def get_channel(channel_id)
+  channel = Channel.find channel_id
   channel.attributes.merge(
     users: channel.users,
     messages: channel.messages.limit(100).reverse,
     latLng: (channel.lat && channel.lng) ? [channel.lat, channel.lng] : nil
-  ).to_json
+  )
+end
+
+get '/channel/:id' do
+  get_channel(params[:id]).to_json
 end
 
 put '/channels/:id' do
@@ -93,6 +99,7 @@ post '/users' do
   user.to_json
 end
 
+# return data for the current channel
 post '/memberships' do
   payload = JSON.parse(request.body.read)
   user = find_user payload
@@ -101,8 +108,8 @@ post '/memberships' do
   user.memberships.each {|x| x.update_attributes(terminated: Time.now)}
   m = Membership.find_or_create_by_user_id_and_channel_id( user.id, channel_id)
   m.update_attributes(terminated: nil)
-  puts "#{m.to_json}"
-  m.to_json
+  puts "created membership #{m.to_json}; returning channel"
+  get_channel(m.channel_id).to_json
 end
 
 
@@ -118,6 +125,8 @@ post '/messages' do
     created: Time.now
   )
   puts payload
+  # send back channels (saves extra request)
+  #
   res.to_json
 end
 
