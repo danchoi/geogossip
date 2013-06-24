@@ -64,7 +64,7 @@ def get_channel(channel_id)
   channel = Channel.find channel_id
   channel.attributes.merge(
     users: channel.users,
-    messages: channel.messages.limit(20).reverse,
+    messages: channel.messages.limit(100).reverse,
     latLng: (channel.lat && channel.lng) ? [channel.lat, channel.lng] : nil
   )
 end
