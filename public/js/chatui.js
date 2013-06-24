@@ -220,8 +220,8 @@ function ChatUICtrl ($scope, $http, $timeout) {
         var channel_id = json_msg.channel_id;
         console.log("RECEIVED websocket message! channel_id "+channel_id);
 
-        console.log(d3.select("#channel-"+channel_id)[0]);
 
+        $scope.populateMap();
         d3.select("#channel-"+channel_id)
           .style("background-color", "red")
           .transition()
