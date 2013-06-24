@@ -85,7 +85,6 @@ function ChatUICtrl ($scope, $http, $timeout) {
       }
       $scope.populateMap();
       console.log("scroll height right now is " + $(".chat_container")[0].scrollHeight);
-      $(".chat_container").scrollTop($(".chat_container")[0].scrollHeight);
 
     });
   };
@@ -99,10 +98,12 @@ function ChatUICtrl ($scope, $http, $timeout) {
     $http.post('/memberships', {user_id: $scope.thisUser.user_id, channel_id: $scope.activeChannel.channel_id})
       .success(function(data){
         console.log(data);
-        $(".chat_container").scrollTop($(".chat_container")[0].scrollHeight);
         $scope.activeChannel = data;
         $scope.channels[idx] = data;
         $scope.populateMap();
+        $timeout(function(){
+		$(".chat_container").scrollTop($(".chat_container")[0].scrollHeight);
+	}, 200);
 
       });
   };
@@ -116,7 +117,6 @@ function ChatUICtrl ($scope, $http, $timeout) {
     $http.post("/messages", payload).success(function(data) {
       // inefficient, but OK for now
       $scope.loadChannels();
-      $(".chat_container").scrollTop($(".chat_container")[0].scrollHeight);
     });
     $scope.activeChannel.messages.push({
       name: "Anon",
