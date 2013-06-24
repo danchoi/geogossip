@@ -113,16 +113,8 @@ function ChatUICtrl ($scope, $http, $timeout) {
       channel_id: $scope.activeChannel.channel_id
     };
     $http.post("/messages", payload).success(function(data) {
-      // inefficient, but OK for now
-      $scope.loadChannels();
+      
     });
-    /*
-    $scope.activeChannel.messages.push({
-      name: "Anon",
-      message: $scope.newMessage
-    });
-    */
-
     $scope.newMessage = "";
   };
 
@@ -213,11 +205,10 @@ function ChatUICtrl ($scope, $http, $timeout) {
 
     };
     w.onmessage = function(e){
-      $scope.$apply(function(){
+      
         //receceived some message
         var json_msg = JSON.parse(e.data);
         console.log("RECEIVED websocket message!");
-        console.log(e.data);
         var channel_id = json_msg.channel_id;
 
         d3.selectAll(".channel")
@@ -238,9 +229,11 @@ function ChatUICtrl ($scope, $http, $timeout) {
           .style("fill", "yellow")
 
         
-        $scope.activeChannel = json_msg.channel_obj;
-      });
-  
+        if ($scope.activeChannel.channel_id == channel_id){
+            $scope.activeChannel = json_msg.channel_obj; 
+            $scope.$apply();
+        }
+ 
     }
   });
   
