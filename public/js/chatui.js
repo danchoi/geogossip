@@ -100,9 +100,10 @@ function ChatUICtrl ($scope, $http, $timeout) {
     $scope.activeChannel = $scope.channels[idx];
     $http.post('/memberships', {user_id: $scope.thisUser.user_id, channel_id: $scope.activeChannel.channel_id})
       .success(function(data){
-        console.log(data);
         $scope.activeChannel = data;
+        $scope.channels[idx] = data;
         $scope.populateMap();
+
       });
   };
 
@@ -205,20 +206,21 @@ function ChatUICtrl ($scope, $http, $timeout) {
 
     };
     w.onmessage = function(e){
+      $scope.$apply(function(){
       
         //receceived some message
         var json_msg = JSON.parse(e.data);
-        console.log("RECEIVED websocket message!");
         var channel_id = json_msg.channel_id;
+        console.log("RECEIVED websocket message! channel_id "+channel_id);
 
-        d3.selectAll(".channel")
-          .style("background-color", "white");
+        console.log(d3.select("#channel-"+channel_id)[0]);
 
         d3.select("#channel-"+channel_id)
           .style("background-color", "red")
           .transition()
-          .duration(500)
-          .style("background-color", "yellow");
+          .duration(1500)
+          .style("background-color", null);
+       
         
         d3.select("#channel-circle-"+channel_id)
           .style("fill", "red")
@@ -226,14 +228,20 @@ function ChatUICtrl ($scope, $http, $timeout) {
           .transition()
           .duration(500)
           .attr("r", 12)
-          .style("fill", "yellow")
+          .style("fill", function() {
+            console.log(this);
+            if ($(this).hasClass('channel_active')) {
+              return "yellow";
+            } else {
+              return "transparent";
+            }
+          });
 
         
         if ($scope.activeChannel.channel_id == channel_id){
             $scope.activeChannel = json_msg.channel_obj; 
-            $scope.$apply();
         }
- 
+      }); 
     }
   });
   
