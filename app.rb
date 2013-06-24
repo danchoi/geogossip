@@ -43,7 +43,7 @@ get '/channels' do
   Channel.order("updated desc").all.map {|channel|
     channel.attributes.merge(
       users: channel.users,
-      messages: channel.messages.limit(20).reverse,
+      messages: channel.messages.limit(100).reverse,
       latLng: (channel.lat && channel.lng) ? [channel.lat, channel.lng] : nil
     )
   }.to_json
@@ -62,7 +62,7 @@ get '/channel/:id' do
   channel = Channel.find params[:id]
   channel.attributes.merge(
     users: channel.users,
-    messages: channel.messages.limit(20).reverse,
+    messages: channel.messages.limit(100).reverse,
     latLng: (channel.lat && channel.lng) ? [channel.lat, channel.lng] : nil
   ).to_json
 end

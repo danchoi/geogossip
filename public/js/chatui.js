@@ -34,13 +34,6 @@ function ChatUICtrl ($scope, $http, $timeout) {
 
   $scope.thisUser = {};
 
-  /* not used currently */
-  $scope.refreshUsers = function() {
-    $http.get("/users").success(function(data) {
-      $scope.users = data;
-    });
-  }
-
   $scope.loginUser = function(){
    if (has_local_storage()){
       if(localStorage['geogossip.user_id'] && localStorage['geogossip.user_nick']){
@@ -86,9 +79,14 @@ function ChatUICtrl ($scope, $http, $timeout) {
   $scope.loadChannels = function (){
     $http.get("/channels").success(function(data) {
       $scope.channels = data;
-      if (!$scope.activeChannel) 
+      if (!$scope.activeChannel){
         $scope.activeChannel = data[0];
+        
+      }
       $scope.populateMap();
+      console.log("scroll height right now is " + $(".chat_container")[0].scrollHeight);
+      $(".chat_container").scrollTop($(".chat_container")[0].scrollHeight);
+
     });
   };
 
@@ -101,6 +99,7 @@ function ChatUICtrl ($scope, $http, $timeout) {
     $http.post('/memberships', {user_id: $scope.thisUser.user_id, channel_id: $scope.activeChannel.channel_id})
       .success(function(data){
         console.log(data);
+        $(".chat_container").scrollTop($(".chat_container")[0].scrollHeight);
       });
     /* this highlights map circle if channel on map */
     $scope.populateMap();
@@ -115,6 +114,7 @@ function ChatUICtrl ($scope, $http, $timeout) {
     $http.post("/messages", payload).success(function(data) {
       // inefficient, but OK for now
       $scope.loadChannels();
+      $(".chat_container").scrollTop($(".chat_container")[0].scrollHeight);
     });
     /*
     $scope.activeChannel.messages.push({
@@ -233,8 +233,8 @@ function ChatUICtrl ($scope, $http, $timeout) {
         console.log("new channel data "+data);
         $scope.activeChannel = data;
       });
- 
     }
+
   });
 
 }
