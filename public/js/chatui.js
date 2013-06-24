@@ -101,9 +101,9 @@ function ChatUICtrl ($scope, $http, $timeout) {
     $http.post('/memberships', {user_id: $scope.thisUser.user_id, channel_id: $scope.activeChannel.channel_id})
       .success(function(data){
         console.log(data);
+        $scope.activeChannel = data;
+        $scope.populateMap();
       });
-    /* this highlights map circle if channel on map */
-    $scope.populateMap();
   };
 
   $scope.postMessage = function(msg){
